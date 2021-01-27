@@ -1,22 +1,20 @@
+local menu = { 'VISUALS', 'Effects' }
+
 local gui = {
-    checkbox = ui.new_checkbox("VISUALS", "Effects", "Hit effect"),
-    slider = ui.new_slider("VISUALS", "Effects", "Hit effect", 3, 20, 5, true, "s", 0.1),
+    checkbox = ui.new_checkbox(menu[1], menu[2], 'Hit Effect'),
+    slider = ui.new_slider(menu[1], menu[2], 'Hit Effect', 3, 20, 5, true, 's', 0.1),
 }
 
 
-local function on_player_hurt(e)
+client.set_event_callback('player_hurt', function(event)
     if ui.get(gui.checkbox) ~= true then
         return
     end
 
-    local attacker = e.attacker
-    local attacker_id = client.userid_to_entindex(attacker)
-    local local_id = entity.get_local_player()
+    local attacker = client.userid_to_entindex(event.attacker)
+    local me = entity.get_local_player()
 
-    if attacker_id == local_id then
-        entity.set_prop(local_id, "m_flHealthShotBoostExpirationTime", globals.curtime() + (ui.get(gui.slider) * 0.1))
+    if attacker == me then
+        entity.set_prop(me, "m_flHealthShotBoostExpirationTime", globals.curtime() + (ui.get(gui.slider) * 0.1))
     end
-end
-
-
-client.set_event_callback("player_hurt", on_player_hurt)
+end)
